@@ -1,0 +1,20 @@
+{
+  "name": "ably-postgres",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Apoorv Vardhan",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "ably": "^1.2.5",
+    "pg": "^8.5.1"
+  },
+  "devDependencies": {
+    "@types/pg": "^7.14.10"
+  }
+}
