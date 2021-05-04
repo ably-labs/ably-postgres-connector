@@ -1,9 +1,9 @@
 {
     "dbConfig": {
-        "host": "127.0.0.1",
+        "host": "db",
         "port": 5432,
         "user": "postgres",
-        "password": "password",
+        "password": "postgres",
         "database": "mydb"
     },
     "connector": [

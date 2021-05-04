@@ -1,0 +1,24 @@
+version: "3.7"
+services:
+  db:
+    build:
+        context: ./Docker
+        dockerfile: db.Dockerfile
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - connector-db:/var/lib/postgresql/data
+    
+  connector:
+    build:
+      context: .
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+    
+volumes:
+  connector-db:

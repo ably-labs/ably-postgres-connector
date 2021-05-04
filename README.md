@@ -22,7 +22,7 @@ CREATE TABLE users (
 );
 ```
 
-- Update the DB & Ably credentials in the `config/default.json` file, you don't need to change the ablychannel config part if you're using the `users` table.
+- Update the DB (if using docker-compose, then the DB config don't need any changes) & Ably credentials in the `config/default.json` file, you don't need to change the ablychannel config part if you're using the `users` table.
 
 - Running
 
@@ -42,13 +42,23 @@ CREATE TABLE users (
     node test-lib.js
     ```
 
+    Running through docker-compose
+    ```
+    docker-compose run connector
+    ```
+
 - Visit your Ably dev console and connect to the channel `ablyusersins` to see the result once we insert a record.
 
 - To test it just make an insert into your DB through the SQL shell or other tab in the terminal.
-
-```sql
-INSERT INTO users VALUES (4, 'PostgreSQL talking through Ably!');
-```
+   
+   If you're using `psql`, you can use something like this -
+   ``` 
+    psql postgresql://postgres:postgres@localhost:5432/mydb
+    ```
+    Insert query -
+    ```sql
+     INSERT INTO users VALUES (4, 'PostgreSQL talking through Ably!');
+    ```
 
 - Now see your Ably dev console where you connected to the channel you should be able to see the latest message there!
 
