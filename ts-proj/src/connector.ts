@@ -17,7 +17,7 @@ const setup = async (filepath: string) => {
     await client
         .connect()
     try {
-        await client.query('LISTEN "table_update"'); // both working "table_update" or table_update
+        await client.query('LISTEN "table_update"');
         client.on("notification", function (data) {
             if (data.channel === "table_update") {
                 const notifyData = JSON.parse(data.payload)
@@ -82,8 +82,8 @@ export const postgresconnector = async (filepath: string) => {
             client.query(createCtrlTable, (err, res) => {
                 if (shouldAbort(err)) return
 
-                let deleteQuery = `Delete from ablycontroltable where tablename not in (select tablename from users where `
-                let selDropQuery = `Select * from ablycontroltable where tablename not in (select tablename from users where `
+                let deleteQuery = `Delete from ablycontroltable where not (`
+                let selDropQuery = `Select * from ablycontroltable where not (`
                 let commonQueryPart = ``
 
                 for (let i = 0; i < connector.length; i++) {

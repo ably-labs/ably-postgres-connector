@@ -12,7 +12,7 @@ client
   .connect()
   .then(() => console.log("connected"))
   .catch((err) => console.error("connection error", err.stack));
-client.query('LISTEN "table_update"'); // both working "table_update" or table_update
+client.query('LISTEN "table_update"');
 
 
 const shouldAbort = (err) => {
@@ -50,8 +50,8 @@ $$ LANGUAGE plpgsql;`;
     client.query(createCtrlTable, (err, res) => {
       if (shouldAbort(err)) return
 
-      let deleteQuery = `Delete from ablycontroltable where tablename not in (select tablename from users where `
-      let selDropQuery = `Select * from ablycontroltable where tablename not in (select tablename from users where `
+      let deleteQuery = `Delete from ablycontroltable where not (`;
+      let selDropQuery = `Select * from ablycontroltable where not (`;
       let commonQueryPart = ``
 
       for (let i = 0; i < connector.length; i++) {
@@ -136,15 +136,4 @@ client.on("notification", function (data) {
       }
     })
   }
-
-  // sample response -
-  /*
-  NotificationResponseMessage {
-  length: 116,
-  processId: 9248,
-  channel: 'table_update',
-  payload: '{"table" : "users", "type" : "INSERT", "row" : {"id":4,"name":"Pass ablychannel dynamically"}}',
-  name: 'notification'
-}
-*/
 });
