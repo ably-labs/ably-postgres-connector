@@ -1,19 +1,21 @@
-## ably-postgres-connector
+## Streaming PostgresDB changes to millions of clients in realtime
 
-The library publishes a message on an Ably channel when operations (insert/update/delete) are executed on tables in PostgreSQL database.
+The Ably-Postgres connector publishes a message on a given Ably channel whenever any operations (insert/update/delete) are executed on the tables of your PostgreSQL database.
 
-You need to specify the table name, operation and ably channel name where you want to be alerted, on trigger of the operation. Refer the [example config](config/default.json) for more info.
+You can setup the connector with the configuration details of your database, as well as the Ably app, including your API Key, channel names for various types of updates, etc.
+
+Check out the [example config](config/default.json) for more info.
 
 ### Prerequisites
 
 - PostgreSQL (tested on  version 13)
-- Ably account (API Key )
+- Ably account
 
-### Example
+### How to run it locally
 
-In `config/default.json` add your DB, Ably credentials & ably channel, table you want to hear on updates for.
+Open the `config/default.json` file and add your database and Ably account credentials as needed.
 
-- Create a table in your DB let's say `users`.
+- If you don't already have a table, create one in your DB. For example, for a table named `users`:
 
 ```sql
 CREATE TABLE users (
@@ -22,18 +24,16 @@ CREATE TABLE users (
 );
 ```
 
-- Update the DB (if using docker-compose, then the DB config don't need any changes) & Ably credentials in the `config/default.json` file, you don't need to change the ablychannel config part if you're using the `users` table.
+- Update the database & Ably credentials in the `config/default.json` file. (You can skip this step if you are using `docker-compose`)
 
-- Running
-
-    Running the JS implementation
+- Option 1 - Run the test file using the commands below:
 
     ```
     npm i
     node test.js
     ```
 
-    Running the TS lib
+- Option 2 - Run the full library
     ```
     cd ts-proj
     npm i
@@ -42,24 +42,13 @@ CREATE TABLE users (
     node test-lib.js
     ```
 
-    Running through docker-compose
+- Option 3 - Running through `docker-compose`
     ```
     docker-compose run connector
     ```
 
-- Visit your Ably dev console and connect to the channel `ablyusersins` to see the result once we insert a record.
-
-- To test it just make an insert into your DB through the SQL shell or other tab in the terminal.
-   
-   If you're using `psql`, you can use something like this -
-   ``` 
-    psql postgresql://postgres:postgres@localhost:5432/mydb
-    ```
-    Insert query -
-    ```sql
-     INSERT INTO users VALUES (4, 'PostgreSQL talking through Ably!');
-    ```
-
-- Now see your Ably dev console where you connected to the channel you should be able to see the latest message there!
+- Visit your Ably dev console and connect to the channel `ablyusersins` (or whichever channel you specified in your config). Try performing various operations (insert, update, delete) on your table. For every change, you should see a new message in the specific channel(s).
 
 ![Flow Diagram](./ably-postgres-connector.png)
+
+### How does it work?
