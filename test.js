@@ -5,15 +5,20 @@ const dbConfig = config.get("dbConfig");
 const connector = config.get("connector");
 const ablyOptions = config.get("ably");
 
+// instantiate Ably
 const ably = new Ably.Realtime(ablyOptions.apiKey);
 
+// instantiate node-postgresconnector client
 const client = new Client(dbConfig);
 client
   .connect()
   .then(() => console.log("connected"))
   .catch((err) => console.error("connection error", err.stack));
+
+// listen on a particular data channel
 client.query('LISTEN "table_update"');
 
+// Rollback in case of error during transaction
 const shouldAbort = (err) => {
   if (err) {
     console.error("Error in transaction", err.stack);
@@ -29,6 +34,7 @@ const shouldAbort = (err) => {
 client.query("BEGIN", (err) => {
   if (shouldAbort(err)) return;
 
+  // Create fn to trigger the pg_notify on data change
   const queryText = `CREATE OR REPLACE FUNCTION ably_notify() RETURNS trigger AS $$
   DECLARE
   rec record;
@@ -44,6 +50,8 @@ END;
 $$ LANGUAGE plpgsql;`;
   client.query(queryText, (err, res) => {
     if (shouldAbort(err)) return;
+
+    // Create Ably config table, to maintain table-to-channel mapping
     const createCtrlTable = `CREATE TABLE IF NOT EXISTS ablycontroltable(tablename VARCHAR(100) NOT NULL, ablychannelname VARCHAR(100) NOT NULL, operation VARCHAR(50), 
     PRIMARY KEY(tablename, ablychannelname, operation));`;
     client.query(createCtrlTable, (err, res) => {
@@ -71,11 +79,13 @@ $$ LANGUAGE plpgsql;`;
               "INSERT INTO ablycontroltable(tablename, ablychannelname, operation) VALUES($1, $2, $3) RETURNING *";
             const values = [tableName, ablyChannel, op];
 
-            // callback
+            // Insert mapping into the Ably config table
             client.query(insertData, values, (err, res) => {
               if (err) {
                 console.log(err.stack);
               }
+
+              // Create trigger for the particular table & DB operation combination
               const createTrigger = `CREATE TRIGGER ${tableName}_notify_${op} AFTER ${op} ON ${tableName} FOR EACH ROW EXECUTE PROCEDURE ably_notify();`;
               client.query(createTrigger, (err, res) => {
                 if (err) {
@@ -90,6 +100,7 @@ $$ LANGUAGE plpgsql;`;
       deleteQuery += commonQueryPart;
       selDropQuery += commonQueryPart;
 
+      // Manage deletion to config by dropping stale triggers & removing stale data from Ably config table
       client.query(selDropQuery, (err, res) => {
         if (shouldAbort(err)) return;
         for (let i = 0; i < res.rows.length; i++) {
@@ -107,6 +118,7 @@ $$ LANGUAGE plpgsql;`;
       });
     });
 
+    // Commit the transaction
     client.query("COMMIT", (err) => {
       if (err) {
         console.error("Error committing transaction", err.stack);
@@ -115,18 +127,23 @@ $$ LANGUAGE plpgsql;`;
   });
 });
 
+// on trigger of notification by pg_notify
 client.on("notification", function (data) {
   if (data.channel === "table_update") {
     const notifyData = JSON.parse(data.payload);
     const operation = notifyData.type;
     const tableName = notifyData.table;
     const getAblyChannel = `Select ablychannelname from ablycontroltable where tablename='${tableName}' and operation='${operation}'`;
+
+    // get the ably channel to publish data change on
     client.query(getAblyChannel, (err, res) => {
       if (err) {
         console.log(err.stack);
       } else {
         if (res.rows.length != 0) {
           const channel = ably.channels.get(res.rows[0].ablychannelname);
+
+          // Publish message to Ably channel
           channel.publish(
             "New message from the Ably/ Postgres connector",
             data.payload

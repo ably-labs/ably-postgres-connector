@@ -11,28 +11,33 @@ const setup = async (filepath: string) => {
   connector = config["connector"];
   const ablyOptions = config["ably"];
 
-  //instantiate Ably
+  // instantiate Ably
   ably = new Ably.Rest(ablyOptions.apiKey);
 
-  //instantiate a postgres client
+  // instantiate node-postgresconnector client
   client = new Client(dbConfig);
   await client.connect();
 
   try {
-    // add a listener on the given table
+    // listen on a particular data channel
     await client.query('LISTEN "table_update"');
+    // on trigger of notification by pg_notify
     client.on("notification", function (data) {
       if (data.channel === "table_update") {
         const notifyData = JSON.parse(data.payload);
         const operation = notifyData.type;
         const tableName = notifyData.table;
         const queryGetAblyChannelName = `Select ablychannelname from ablycontroltable where tablename='${tableName}' and operation='${operation}'`;
+        
+        // get the ably channel to publish data change on
         client.query(queryGetAblyChannelName, (err, res) => {
           if (err) {
             console.log(err.stack);
           } else {
             if (res.rows.length != 0) {
               const channel = ably.channels.get(res.rows[0].ablychannelname);
+              
+              // Publish message to Ably channel
               channel.publish(
                 "New message from the Ably/ Postgres connector",
                 data.payload
@@ -49,6 +54,7 @@ const setup = async (filepath: string) => {
   }
 };
 
+// Rollback in case of error during transaction
 const shouldAbort = (err) => {
   if (err) {
     console.error("Error in transaction", err.stack);
@@ -62,10 +68,12 @@ const shouldAbort = (err) => {
 };
 
 export const postgresconnector = async (filepath: string) => {
+  // Setup Ably postgresconnector 
   await setup(filepath);
   client.query("BEGIN", (err) => {
     if (shouldAbort(err)) return;
 
+    // Create fn to trigger the pg_notify on data change
     const queryText = `CREATE OR REPLACE FUNCTION ably_notify() RETURNS trigger AS $$
       DECLARE
         rec record;
@@ -81,6 +89,8 @@ export const postgresconnector = async (filepath: string) => {
     $$ LANGUAGE plpgsql;`;
     client.query(queryText, (err, res) => {
       if (shouldAbort(err)) return;
+
+      // Create Ably config table, to maintain table-to-ablychannel mapping
       const createCtrlTable = `CREATE TABLE IF NOT EXISTS ablycontroltable(tablename VARCHAR(100) NOT NULL, ablychannelname VARCHAR(100) NOT NULL, operation VARCHAR(50), 
         PRIMARY KEY(tablename, ablychannelname, operation));`;
       client.query(createCtrlTable, (err, res) => {
@@ -108,11 +118,13 @@ export const postgresconnector = async (filepath: string) => {
                 "INSERT INTO ablycontroltable(tablename, ablychannelname, operation) VALUES($1, $2, $3) RETURNING *";
               const values = [tableName, ablyChannel, op];
 
-              // callback
+              // Insert mapping into the Ably config table
               client.query(insertData, values, (err, res) => {
                 if (err) {
                   console.log(err.stack);
                 }
+
+                // Create trigger for the particular table & DB operation combination
                 const createTrigger = `CREATE TRIGGER ${tableName}_notify_${op} AFTER ${op} ON ${tableName} FOR EACH ROW EXECUTE PROCEDURE ably_notify();`;
                 client.query(createTrigger, (err, res) => {
                   if (err) {
@@ -127,6 +139,7 @@ export const postgresconnector = async (filepath: string) => {
         deleteQuery += commonQueryPart;
         selDropQuery += commonQueryPart;
 
+        // Manage deletion to config by dropping stale triggers & removing stale data from Ably config table
         client.query(selDropQuery, (err, res) => {
           if (shouldAbort(err)) return;
           for (let i = 0; i < res.rows.length; i++) {
@@ -144,6 +157,7 @@ export const postgresconnector = async (filepath: string) => {
         });
       });
 
+      // Commit the transaction
       client.query("COMMIT", (err) => {
         if (err) {
           console.error("Error committing transaction", err.stack);

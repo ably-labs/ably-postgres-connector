@@ -1,6 +1,6 @@
 const { postgresconnector } = require("./ts-proj/dist");
-const test_async = () => {
+const test_lib = () => {
   postgresconnector("config/default.json");
 };
 
-test_async();
+test_lib();
