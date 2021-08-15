@@ -4,7 +4,7 @@ The Ably-Postgres connector publishes a message on a given Ably channel whenever
 
 You can setup the connector with the configuration details of your database, as well as the Ably app, including your API Key, channel names for various types of updates, etc.
 
-Check out the [example config](config/default.json) for more info.
+Check out the [example config](../config/default.json) for more info.
 
 ### Prerequisites
 
