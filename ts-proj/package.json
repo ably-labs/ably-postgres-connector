@@ -1,13 +1,19 @@
 {
-  "name": "ably-postgres",
+  "name": "ably-postgres-connector",
   "version": "1.0.0",
-  "description": "",
+  "description": "Ably-Postgres connector publishes a message on a given Ably channel whenever any operations (insert/update/delete) are executed on the tables of your PostgreSQL database.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ably-labs/ably-postgres-connector.git",
+    "directory": "ts-proj"
+  },
+  "keywords": [],
   "author": "Apoorv Vardhan",
   "license": "Apache-2.0",
   "dependencies": {
