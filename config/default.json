@@ -9,17 +9,17 @@
     "connector": [
         {
             "tablename": "users",
-            "ablychannelname": "ablyusersins",
+            "ablychannelname": "ably-users-added",
             "operation": "INSERT"
         },
         {
             "tablename": "users",
-            "ablychannelname": "ablyusersupt",
+            "ablychannelname": "ably-users-updated",
             "operation": "UPDATE"
         },
         {
             "tablename": "users",
-            "ablychannelname": "ablyusersdel",
+            "ablychannelname": "ably-users-removed",
             "operation": "DELETE"
         }
     ],
