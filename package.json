@@ -4,8 +4,10 @@
   "description": "",
   "main": "test.js",
   "dependencies": {
+    "@types/pg": "^8.6.1",
     "ably": "^1.2.4",
     "config": "^3.3.3",
+    "dotenv": "^10.0.0",
     "pg": "^8.5.1"
   },
   "devDependencies": {},

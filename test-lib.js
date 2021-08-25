@@ -1,6 +1,7 @@
-const { postgresconnector } = require("./ts-proj/dist");
+const { Connector } = require("./ts-proj/dist");
 const test_lib = () => {
-  postgresconnector("config/default.json");
+  const ablyconnector = new Connector("config/default.json");
+  ablyconnector.start();
 };
 
 test_lib();

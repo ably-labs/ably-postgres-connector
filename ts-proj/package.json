@@ -18,6 +18,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "ably": "^1.2.5",
+    "dotenv": "^10.0.0",
     "pg": "^8.5.1"
   },
   "devDependencies": {
