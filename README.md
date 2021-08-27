@@ -8,18 +8,27 @@ Check out the [example config](config/default.json) for more info.
 
 ### Prerequisites
 
-- PostgreSQL (tested on version 13)
-- Ably account
+- [PostgreSQL](https://www.postgresql.org/) (this project was tested on version 13)
+- [An Ably account](https://ably.com/)
 
-### Installation
+TODO - Add sections similar to the following for running it via npm and other options etc.
+
+### How to run it locally
 
 ```sh
     npm install ably-postgres-connector --save
 ```
 
-### Setup config
+#### Setup config
+
+- The first step is to add in your configuration. You can do this via environment variables or a JSON file.
+
+#### Option 1 - Adding config via a JSON file
 
 - Create `config/default.json` file (refer to the [example config](config/default.json)) and add your database and Ably account credentials as needed.
+
+TODO - remove table creation info from here. In a later section, you can mention that one can use the connector with an existing database and table but if they are just here to see how it works, they can create a table like so. But definitely not here. 
+
 
 - If you don't already have a table, create one in your DB. For example, for a table named `users`:
 
@@ -31,6 +40,11 @@ Check out the [example config](config/default.json) for more info.
 ```
 
 - Update the database & Ably credentials in the `config/default.json` file.
+
+#### Option 2 - Adding config via environment variables
+TODO - add info on how to use it via env vars
+
+TODO - example usage needs to be added for all sections/ options
 
 ### Example usage
 
@@ -44,15 +58,14 @@ Check out the [example config](config/default.json) for more info.
     test_lib();
 ```
 
-### Running
-
-```sh
-    node test-lib.js
-```
+TODO - Please clarify what you mean by test here.
 
 ### Test
 
 Visit your Ably dev console and connect to the channel `ably-users-added` (or whichever channel you specified in your config). Try performing various operations (insert, update, delete) on your table. For every change, you should see a new message in the specific channel(s).
+
+
+TODO - Please clarify what you mean by source here
 
 ### How to run from source
 
@@ -79,15 +92,13 @@ Follow the [Setup config](#Setup-config) step from above and then proceed with a
   docker-compose run connector
   ```
 
-### How does it work?
+## How does the connector work?
 
-![Overall Flow Diagram](./ably-postgres-connector-2.png)
+<img width="1252" alt="ably-to-db-postgres@2x (3)" src="https://user-images.githubusercontent.com/5900152/131161607-cf4ff6d9-f6d6-45c9-9a3e-caa9d26a8b51.png">
+
 
 - The config file contains the details related to the tables you want to listen for data changes on and your Ably API key.
 - Using that config file, the connector creates an Ably config table `ablycontroltable` to maintain the table to Ably channel mapping in the DB.
-
-![Internal Flow Diagram](./ably-postgres-connector-1.png)
-
 - The connector then creates a DB procedure/function which performs the [`pg_notify`](https://www.postgresql.org/docs/current/sql-notify.html) function that publishes data changes on a data channel.
 - The connector then creates triggers for the table-operation combination specified in the config. The job of the trigger is to execute the procedure created above.
 - The connector is listening for changes on that particular data channel using the [`LISTEN`](https://www.postgresql.org/docs/current/sql-listen.html) feature. When it gets a notification it publishes the data on the appropriate Ably channel.
