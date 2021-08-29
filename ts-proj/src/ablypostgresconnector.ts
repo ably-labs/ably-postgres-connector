@@ -9,19 +9,23 @@ export class Connector {
   private readonly pgClient: Client;
   private readonly pgConfig: ClientConfig;
   private readonly connector: any;
+  private readonly fileext: string;
 
   constructor(filepath: string) {
-    let filext = filepath.split(".").pop();
-    if (filext == "json") {
+    if (filepath == "" || filepath == undefined) {
+      this.fileext = "";
+    } else {
+      this.fileext = filepath.split(".").pop();
+    }
+
+    if (this.fileext == "json") {
       const rawdata = fs.readFileSync(filepath);
       const config = JSON.parse(rawdata);
       this.pgConfig = config["dbConfig"];
       this.connector = config["connector"];
       this.ablyApiKey = config["ably"].apiKey;
-    } else {
-      if (filepath == "") {
-        dotenv.config();
-      } else {
+    } else if (this.fileext == "env" || this.fileext == "") {
+      if (this.fileext == "env") {
         dotenv.config({ path: filepath });
       }
       const {
@@ -42,6 +46,9 @@ export class Connector {
       };
       this.ablyApiKey = ABLY_API_KEY;
       this.connector = JSON.parse(ABLY_CONNECTOR);
+    } else {
+      console.error("Invalid config");
+      return;
     }
     // instantiate Ably
     this.ably = new Ably.Rest(this.ablyApiKey);

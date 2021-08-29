@@ -1,6 +1,6 @@
 const { Connector } = require("./ts-proj/dist");
 const test_lib = () => {
-  const ablyconnector = new Connector("config/default.json");
+  const ablyconnector = new Connector();
   ablyconnector.start();
 };
 
