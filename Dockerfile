@@ -1,16 +1,16 @@
 FROM node:14-alpine
-RUN mkdir -p /ably-postgres-connector/ts-proj
-WORKDIR /ably-postgres-connector/ts-proj
+RUN mkdir -p /ably-postgres-connector/lib
+WORKDIR /ably-postgres-connector/lib
 
-COPY ts-proj/package-lock.json ts-proj/package.json ts-proj/tsconfig.json ./
+COPY lib/package-lock.json lib/package.json lib/tsconfig.json ./
 RUN npm install
 RUN npm install -g typescript
 
-COPY ts-proj/src src/
+COPY lib/src src/
 RUN npm run build
 
 WORKDIR /ably-postgres-connector
-COPY test-lib.js ./
+COPY examples examples/
 COPY config config/
 EXPOSE 3000
-CMD ["node", "test-lib.js"]
+CMD ["node", "examples/basic.js"]

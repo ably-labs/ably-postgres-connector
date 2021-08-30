@@ -12,10 +12,10 @@ export class Connector {
   private readonly fileext: string;
 
   constructor(filepath: string) {
-    if (filepath == "" || filepath == undefined) {
-      this.fileext = "";
-    } else {
+    if (filepath) {
       this.fileext = filepath.split(".").pop();
+    } else {
+      this.fileext = "";
     }
 
     if (this.fileext == "json") {

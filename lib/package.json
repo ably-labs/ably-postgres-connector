@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ably-labs/ably-postgres-connector.git",
-    "directory": "ts-proj"
+    "directory": "lib"
   },
   "keywords": [],
   "author": "Apoorv Vardhan",
