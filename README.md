@@ -36,12 +36,15 @@ Check out the [example config](config/default.json) for more info.
 
 ```javascript
     // test-lib.js
-    const { postgresconnector } = require("ably-postgres-connector");
-    const test_lib = () => {
-    postgresconnector("config/default.json");
-    };
+    const { Connector } = require("ably-postgres-connector");
+const test_lib = () => {
+  const ablyconnector = new Connector("config/default.json");
+  // or with .env file 
+  // const ablyconnector = new Connector("config/.env"); 
+  ablyconnector.start();
+};
 
-    test_lib();
+test_lib();
 ```
 
 ### Running
