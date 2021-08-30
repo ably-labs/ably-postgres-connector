@@ -31,9 +31,9 @@ Check out the [example config](config/default.json) for more info.
 ```javascript
     const { Connector } = require("ably-postgres-connector");
     const useWithJSONConfig = () => {
-        const ablyconnector = new Connector("config/default.json");
+      const ablyconnector = new Connector("config/default.json");
+      ablyconnector.start();
     };
-
     useWithJSONConfig();
 ```
 
@@ -53,9 +53,9 @@ Check out the [example config](config/default.json) for more info.
 ```javascript
     const { Connector } = require("ably-postgres-connector");
     const useWithEnvConfig = () => {
-        const ablyconnector = new Connector("config/.env");
+      const ablyconnector = new Connector("config/.env");
+      ablyconnector.start();
     };
-
     useWithEnvConfig();
 ```
 
@@ -76,9 +76,9 @@ Check out the [example config](config/default.json) for more info.
 ```javascript
     const { Connector } = require("ably-postgres-connector");
     const useWithEnvDockerCompose = () => {
-        const ablyconnector = new Connector();
+      const ablyconnector = new Connector();
+      ablyconnector.start();
     };
-
     useWithEnvDockerCompose();
 ```
 
