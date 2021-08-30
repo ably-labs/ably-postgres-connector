@@ -13,4 +13,4 @@ WORKDIR /ably-postgres-connector
 COPY examples examples/
 COPY config config/
 EXPOSE 3000
-CMD ["node", "examples/basic.js"]
+CMD ["node", "examples/with-env-docker.js"]
