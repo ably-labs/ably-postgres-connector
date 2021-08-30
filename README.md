@@ -11,86 +11,101 @@ Check out the [example config](config/default.json) for more info.
 - [PostgreSQL](https://www.postgresql.org/) (this project was tested on version 13)
 - [An Ably account](https://ably.com/)
 
-TODO - Add sections similar to the following for running it via npm and other options etc.
-
-### How to run it locally
+### Installation
 
 ```sh
     npm install ably-postgres-connector --save
 ```
 
-#### Setup config
+### Setup config
 
-- The first step is to add in your configuration. You can do this via environment variables or a JSON file.
+- The first step is to add in your configuration. You can do this via env file or a JSON file.
 
 #### Option 1 - Adding config via a JSON file
 
-- Create `config/default.json` file (refer to the [example config](config/default.json)) and add your database and Ably account credentials as needed.
+- Create `config/default.json` file (refer to the [example JSON config](config/default.json)).
+- Add your database and Ably account credentials as needed.
 
-TODO - remove table creation info from here. In a later section, you can mention that one can use the connector with an existing database and table but if they are just here to see how it works, they can create a table like so. But definitely not here. 
-
-
-- If you don't already have a table, create one in your DB. For example, for a table named `users`:
-
-```sql
-    CREATE TABLE users (
-        id integer,
-        name text
-    );
-```
-
-- Update the database & Ably credentials in the `config/default.json` file.
-
-#### Option 2 - Adding config via environment variables
-TODO - add info on how to use it via env vars
-
-TODO - example usage needs to be added for all sections/ options
-
-### Example usage
+##### Example usage
 
 ```javascript
-    // test-lib.js
-    const { postgresconnector } = require("ably-postgres-connector");
-    const test_lib = () => {
-    postgresconnector("config/default.json");
+    const { Connector } = require("ably-postgres-connector");
+    const useWithJSONConfig = () => {
+        const ablyconnector = new Connector("config/default.json");
     };
 
-    test_lib();
+    useWithJSONConfig();
 ```
 
-TODO - Please clarify what you mean by test here.
+##### Running
 
-### Test
+```sh
+    node examples/with-json-config.js
+```
+
+#### Option 2 - Adding config via a env file
+
+- Create `config/.env` file (refer to the [example env config](config/.env)).
+- Add your database and Ably account credentials as needed.
+
+##### Example usage
+
+```javascript
+    const { Connector } = require("ably-postgres-connector");
+    const useWithEnvConfig = () => {
+        const ablyconnector = new Connector("config/.env");
+    };
+
+    useWithEnvConfig();
+```
+
+##### Running (Using the example file)
+
+```sh
+    node examples/with-env-config.js
+```
+
+#### Option 3 - Adding config via a env file through docker-compose
+
+- Create `config/.env` file (refer to the [example env config](config/.env)).
+- Add your database and Ably account credentials as needed.
+- Add path of `.env` file to your `docker-compose` file (refer to the [example docker-compose](docker-compose.yml)).
+
+##### Example usage
+
+```javascript
+    const { Connector } = require("ably-postgres-connector");
+    const useWithEnvDockerCompose = () => {
+        const ablyconnector = new Connector();
+    };
+
+    useWithEnvDockerCompose();
+```
+
+```yaml
+    # connector-block
+    connector:
+      build:
+        context: .
+      env_file: ./config/.env
+      depends_on:
+        - db
+      ports:
+        - "3000:3000"
+```
+
+##### Running (Using the example docker-compose file)
+
+- Uses the `Docker` folder to setup the postgresql image with a dummy DB & users table. 
+- Uses the `Dockerfile` to create the container with node, build the connector & add the config file.
+
+```sh
+    docker-compose run connector
+```
+
+### Connector in Action!
 
 Visit your Ably dev console and connect to the channel `ably-users-added` (or whichever channel you specified in your config). Try performing various operations (insert, update, delete) on your table. For every change, you should see a new message in the specific channel(s).
-
-
-TODO - Please clarify what you mean by source here
-
-### How to run from source
-
-Follow the [Setup config](#Setup-config) step from above and then proceed with an option from below to test.
-
-- Option 1 - Build the library
-
-  - To build the library from source (which is published on npm) and allows you to provide a custom config path.
-
-  ```
-  cd ts-proj
-  npm i
-  npm run build
-  cd ..
-  node test-lib.js
-  ```
-
-- Option 2 - Running through `docker-compose`
-
-  - Creates the docker image and takes care of setting up the Postgres DB as well.
-  - Provides an example of how you can integrate this through Docker with your application.
-
-  ```
-  docker-compose run connector
-  ```
 
 ## How does the connector work?
 
