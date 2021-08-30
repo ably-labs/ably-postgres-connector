@@ -15,6 +15,7 @@ services:
   connector:
     build:
       context: .
+    env_file: ./config/.env
     depends_on:
       - db
     ports:

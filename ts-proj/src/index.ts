@@ -1,1 +1,0 @@
-export {postgresconnector} from './connector'

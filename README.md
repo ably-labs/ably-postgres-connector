@@ -29,12 +29,12 @@ Check out the [example config](config/default.json) for more info.
 ##### Example usage
 
 ```javascript
-    const { Connector } = require("ably-postgres-connector");
-    const useWithJSONConfig = () => {
-      const ablyconnector = new Connector("config/default.json");
-      ablyconnector.start();
-    };
-    useWithJSONConfig();
+const { Connector } = require("ably-postgres-connector");
+const useWithJSONConfig = () => {
+  const ablyconnector = new Connector("config/default.json");
+  ablyconnector.start();
+};
+useWithJSONConfig();
 ```
 
 ##### Running
@@ -51,12 +51,12 @@ Check out the [example config](config/default.json) for more info.
 ##### Example usage
 
 ```javascript
-    const { Connector } = require("ably-postgres-connector");
-    const useWithEnvConfig = () => {
-      const ablyconnector = new Connector("config/.env");
-      ablyconnector.start();
-    };
-    useWithEnvConfig();
+const { Connector } = require("ably-postgres-connector");
+const useWithEnvConfig = () => {
+  const ablyconnector = new Connector("config/.env");
+  ablyconnector.start();
+};
+useWithEnvConfig();
 ```
 
 ##### Running (Using the example file)
@@ -74,29 +74,29 @@ Check out the [example config](config/default.json) for more info.
 ##### Example usage
 
 ```javascript
-    const { Connector } = require("ably-postgres-connector");
-    const useWithEnvDockerCompose = () => {
-      const ablyconnector = new Connector();
-      ablyconnector.start();
-    };
-    useWithEnvDockerCompose();
+const { Connector } = require("ably-postgres-connector");
+const useWithEnvDockerCompose = () => {
+  const ablyconnector = new Connector();
+  ablyconnector.start();
+};
+useWithEnvDockerCompose();
 ```
 
 ```yaml
-    # connector-block
-    connector:
-      build:
-        context: .
-      env_file: ./config/.env
-      depends_on:
-        - db
-      ports:
-        - "3000:3000"
+# connector-block
+connector:
+  build:
+    context: .
+  env_file: ./config/.env
+  depends_on:
+    - db
+  ports:
+    - "3000:3000"
 ```
 
 ##### Running (Using the example docker-compose file)
 
-- Uses the `Docker` folder to setup the postgresql image with a dummy DB & users table. 
+- Uses the `Docker` folder to setup the postgresql image with a dummy DB & users table.
 - Uses the `Dockerfile` to create the container with node, build the connector & add the config file.
 
 ```sh
@@ -110,7 +110,6 @@ Visit your Ably dev console and connect to the channel `ably-users-added` (or wh
 ## How does the connector work?
 
 <img width="1252" alt="ably-to-db-postgres@2x (3)" src="https://user-images.githubusercontent.com/5900152/131161607-cf4ff6d9-f6d6-45c9-9a3e-caa9d26a8b51.png">
-
 
 - The config file contains the details related to the tables you want to listen for data changes on and your Ably API key.
 - Using that config file, the connector creates an Ably config table `ablycontroltable` to maintain the table to Ably channel mapping in the DB.
