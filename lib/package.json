@@ -1,6 +1,6 @@
 {
   "name": "ably-postgres-connector",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Ably-Postgres connector publishes a message on a given Ably channel whenever any operations (insert/update/delete) are executed on the tables of your PostgreSQL database.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
