@@ -40,7 +40,9 @@ useWithJSONConfig();
 ##### Running
 
 ```sh
-    node examples/with-json-config.js
+    cd examples
+    npm i
+    node with-json-config.js
 ```
 
 #### Option 2 - Adding config via a env file
@@ -62,7 +64,9 @@ useWithEnvConfig();
 ##### Running (Using the example file)
 
 ```sh
-    node examples/with-env-config.js
+    cd examples
+    npm i
+    node with-env-config.js
 ```
 
 #### Option 3 - Adding config via a env file through docker-compose
