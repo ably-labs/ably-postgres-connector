@@ -4,7 +4,7 @@ The Ably-Postgres connector publishes a message on a given Ably channel whenever
 
 You can setup the connector with the configuration details of your database, as well as the Ably app, including your API Key, channel names for various types of updates, etc.
 
-Check out the [example config](config/default.json) for more info.
+Check out the [example config](../config/default.json) for more info.
 
 ### Prerequisites
 
@@ -23,7 +23,7 @@ Check out the [example config](config/default.json) for more info.
 
 #### Option 1 - Adding config via a JSON file
 
-- Create `config/default.json` file (refer to the [example JSON config](config/default.json)).
+- Create a JSON config file within your application, let's say `config/default.json` for example. (refer to the [example JSON config](../config/default.json)).
 - Add your database and Ably account credentials as needed.
 
 ##### Example usage
@@ -45,7 +45,7 @@ Check out the [example config](config/default.json) for more info.
 
 #### Option 2 - Adding config via a env file
 
-- Create `config/.env` file (refer to the [example env config](config/.env)).
+- Create a env config file within your application, let's say `config/.env` for example. (refer to the [example env config](../config/.env)).
 - Add your database and Ably account credentials as needed.
 
 ##### Example usage
@@ -67,7 +67,7 @@ Check out the [example config](config/default.json) for more info.
 
 #### Option 3 - Adding config via a env file through docker-compose
 
-- Create `config/.env` file (refer to the [example env config](config/.env)).
+- Create a env config file within your application, let's say `config/.env` for example. (refer to the [example env config](../config/.env)).
 - Add your database and Ably account credentials as needed.
 - Add path of `.env` file to your `docker-compose` file (refer to the [example docker-compose](docker-compose.yml)).
 
